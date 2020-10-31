@@ -90,7 +90,7 @@ class Pictionary(commands.Cog, name="Fun and Games"):
     async def pictionary(self, ctx, rounds=5):
 
         if self.in_progress():
-            await ctx.send('A game of pictionary is already in progress! Please try again later.')
+            await ctx.send('A game of pictionary is already :\'(.')
             return
 
         await ctx.send(f'Starting a game of pictionary with {rounds} rounds')
