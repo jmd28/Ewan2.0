@@ -8,10 +8,8 @@ Cauldron
 Cobweb
 Cockroach
 Coffin
-Crypt
 Demon
 Devil
-Elf
 Fairy
 Ghost
 Ghoul
@@ -23,7 +21,6 @@ Phantom
 Sarcophogus
 Scythe
 Toad
-Tomb 
 Vampire
 bee
 Witch
@@ -41,5 +38,4 @@ Moon
 Scarecrow
 Monster
 Zombie
-Fang
 Sweet

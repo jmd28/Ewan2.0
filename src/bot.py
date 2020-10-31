@@ -17,6 +17,8 @@ from GoogleDownload import get_img_url
 from sketch import draw_img
 from BotUtils import random_file, dm
 
+import datetime
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -39,7 +41,7 @@ async def on_ready():
     
     print(
         f'{client.user} is connected to the following guild:\n'
-        f'{guild.name} (id: {guild.id})\n'
+        f'{guild} (id: {guild.id})\n'
     )
     members = {member.name: member.id for member in guild.members}
 
@@ -65,9 +67,24 @@ async def on_member_join(member):
 class Pictionary(commands.Cog, name="Fun and Games"):
 
     rounds_left: int = 0
+    w: str
+    hintTime: datetime.time = datetime.datetime.now() 
+    indexOfWord: int = 1
 
     def in_progress(self):
         return self.rounds_left > 0
+
+
+    @commands.command(help='get hint')
+    async def hint(self, ctx):
+        if ((datetime.datetime.now() - self.hintTime).seconds < 7):
+            await ctx.send('Settle down cowperson!!')
+        elif not self.in_progress():
+            await ctx.send('A game isn\'t being played idiot.')
+        else:  
+            await ctx.send(f'hint: {self.w[0:self.indexOfWord]}')
+            self.indexOfWord += 1
+            self.hintTime = datetime.datetime.now()
 
     @commands.command(help='play pictionary')
     async def pictionary(self, ctx, rounds=5):
@@ -85,13 +102,14 @@ class Pictionary(commands.Cog, name="Fun and Games"):
 
         while self.in_progress():
             await ctx.send(f"~~                     ~~\n**Round {rounds-self.rounds_left+1}/{rounds}**\n~~                     ~~")
-            w = random.choice(words)
-            words.remove(w)
-            print(w)
-            url = get_img_url(w+"cartoon")
+            self.w = random.choice(words)
+            self.indexOfWord = 1
+            words.remove(self.w)
+            print(self.w)
+            url = get_img_url(self.w+"clipart")
             path = draw_img(url)
             await ctx.send(file=discord.File(path))
-            winner = (await client.wait_for('message', check=lambda m: w.lower()==m.content.lower() and m.author is not client.user)).author.name
+            winner = (await client.wait_for('message', check=lambda m: self.w.lower()==m.content.lower() and m.author is not client.user)).author.name
             
             await ctx.send(f"{winner} won round")
             scores[winner] = scores.get(winner, 0) + 1
