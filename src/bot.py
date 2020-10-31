@@ -88,7 +88,7 @@ class Pictionary(commands.Cog, name="Fun and Games"):
 
         while self.in_progress():
             await ctx.send(f"**Round {rounds-self.rounds_left+1}/{rounds}**")
-            w = self.get_word('words')
+            w = self.get_word('halloween.txt')
             print(w)
             url = get_img_url(w+"cartoon")
             path = draw_img(url)
