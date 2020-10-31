@@ -69,11 +69,6 @@ class Pictionary(commands.Cog, name="Fun and Games"):
     def in_progress(self):
         return self.rounds_left > 0
 
-    def get_word(self, filename):
-        with open(filename) as f:
-            content = [x.strip() for x in f.readlines()]
-        return random.choice(content)
-
     @commands.command(help='play pictionary')
     async def pictionary(self, ctx, rounds=5):
 
@@ -85,21 +80,25 @@ class Pictionary(commands.Cog, name="Fun and Games"):
         self.rounds_left = int(rounds)
 
         scores = {}
+        with open("halloween.txt") as f:
+            words = [x.strip() for x in f.readlines()]
 
         while self.in_progress():
-            await ctx.send(f"**Round {rounds-self.rounds_left+1}/{rounds}**")
-            w = self.get_word('halloween.txt')
+            await ctx.send(f"~~                     ~~\n**Round {rounds-self.rounds_left+1}/{rounds}**\n~~                     ~~")
+            w = random.choice(words)
+            words.remove(w)
             print(w)
             url = get_img_url(w+"cartoon")
             path = draw_img(url)
             await ctx.send(file=discord.File(path))
-            winner = (await client.wait_for('message', check=lambda m: w==m.content.lower() and m.author is not client.user)).author.name
+            winner = (await client.wait_for('message', check=lambda m: w.lower()==m.content.lower() and m.author is not client.user)).author.name
             
             await ctx.send(f"{winner} won round")
             scores[winner] = scores.get(winner, 0) + 1
             self.rounds_left -= 1
 
         winners = [x for x,y in scores.items() if y==max(scores.values())]
+        pprint.pprint(scores)
         await ctx.send('**Winner(s):**')
         for it in winners:
             await ctx.send(it)
