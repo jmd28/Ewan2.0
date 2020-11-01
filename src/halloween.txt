@@ -18,7 +18,7 @@ Imp
 Leprechaun 
 Lantern
 Phantom
-Sarcophogus
+Sarcophagus
 Scythe
 Toad
 Vampire

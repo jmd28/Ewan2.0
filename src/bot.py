@@ -23,17 +23,9 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
-#TODO: disable points in test mode
-
-# guild
-
-
 intents = discord.Intents.all()
-# client = discord.Client(intents=intents)
 
 client = Bot(command_prefix='|', intents=intents)
-
-members = {}
 
 @client.event
 async def on_ready():
@@ -46,8 +38,7 @@ async def on_ready():
     members = {member.name: member.id for member in guild.members}
 
     print(f'Guild Members:')
-    pprint.pprint(guild.members)
-    pprint.pprint(guild.emojis)
+    pprint.pprint(members)
 
 @client.event
 async def on_member_join(member):
@@ -62,7 +53,7 @@ async def on_member_join(member):
 # picture
 # wait until a message matches the word
 # five rounds
-# leaderboard
+# TODO: leaderboard?
 
 class Pictionary(commands.Cog, name="Fun and Games"):
 
@@ -106,7 +97,7 @@ class Pictionary(commands.Cog, name="Fun and Games"):
             self.indexOfWord = 1
             words.remove(self.w)
             print(self.w)
-            url = get_img_url(self.w+"clipart")
+            url = get_img_url(self.w+" clipart")
             path = draw_img(url)
             await ctx.send(file=discord.File(path))
             winner = (await client.wait_for('message', check=lambda m: self.w.lower()==m.content.lower() and m.author is not client.user)).author.name
@@ -115,11 +106,9 @@ class Pictionary(commands.Cog, name="Fun and Games"):
             scores[winner] = scores.get(winner, 0) + 1
             self.rounds_left -= 1
 
-        winners = [x for x,y in scores.items() if y==max(scores.values())]
+        winners = '\n'.join([x for x,y in scores.items() if y==max(scores.values())])
         pprint.pprint(scores)
-        await ctx.send('**Winner(s):**')
-        for it in winners:
-            await ctx.send(it)
+        await ctx.send(f"**Winner(s):**\n{winners}")
 
 
 @client.event
@@ -128,7 +117,6 @@ async def on_message(message):
     if all(x in  message.content.lower() for x in ["spam", "darren"]):
         print('spamming darren')
         guild = discord.utils.get(client.guilds, name=GUILD)
-        # pprint(guild)
         dazza = discord.utils.get(guild.members, name='JouJo Simpstar')
         for _ in range(10): await dm(dazza, 'Darren')
 
